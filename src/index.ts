@@ -61,9 +61,13 @@ export interface FormHandles extends UnformHandles {
   ): Promise<ValidationResult>;
 }
 
-export function useFormHandlers(ref: RefObject<UnformHandles>) {
+export function useFormHandlers(ref: RefObject<UnformHandles>): FormHandles {
   const [schema, setSchema] = useState<ObjectSchema>(Yup.object());
   const handleValidate = useFormValidator(ref, schema);
+
+  if (ref.current === null) {
+    throw Error('null form reference');
+  }
 
   return {
     ...ref.current,
