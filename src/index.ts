@@ -1,7 +1,7 @@
-import { RefObject, useCallback } from "react";
+import { RefObject, useCallback } from 'react';
 
-import { FormHandles } from "@unform/core";
-import { ObjectSchema, ValidationError } from "yup";
+import { FormHandles } from '@unform/core';
+import { ObjectSchema, ValidationError } from 'yup';
 
 interface ValidationResult {
   success: boolean;
@@ -22,7 +22,7 @@ export function useFormValidator(
 ) {
   return useCallback(
     async function handle(): Promise<ValidationResult> {
-      if (!ref.current) throw Error("null form reference");
+      if (!ref.current) throw Error('null form reference');
 
       const data = ref.current.getData();
 
@@ -48,6 +48,6 @@ export function useFormValidator(
         throw err;
       }
     },
-    [ref, schema]
+    [ref, schema, options]
   );
 }
