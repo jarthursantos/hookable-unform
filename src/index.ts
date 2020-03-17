@@ -64,11 +64,11 @@ export function useFormHandlers(ref: RefObject<UnformHandles>) {
   const [schema, setSchema] = useState<Yup.ObjectSchema>(Yup.object());
   const handleValidate = useFormValidator(ref, schema);
 
-  if (ref.current === null) {
-    throw Error('null form reference');
-  }
-
   return useCallback(() => {
+    if (ref.current === null) {
+      throw Error('null form reference');
+    }
+
     return {
       ...ref.current,
       validate: (objSchema: Yup.ObjectSchema, options: ValidationOptions) => {
