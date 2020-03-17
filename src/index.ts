@@ -15,13 +15,14 @@ interface ValidationOptions {
 
 export function useFormValidator(
   ref: RefObject<FormHandles>,
-  schema: ObjectSchema,
-  options: ValidationOptions = {
-    applyErrors: true
-  }
+  schema: ObjectSchema
 ) {
   return useCallback(
-    async function handle(): Promise<ValidationResult> {
+    async function handle(
+      options: ValidationOptions = {
+        applyErrors: true
+      }
+    ): Promise<ValidationResult> {
       if (!ref.current) throw Error('null form reference');
 
       const data = ref.current.getData();
@@ -48,6 +49,6 @@ export function useFormValidator(
         throw err;
       }
     },
-    [ref, schema, options]
+    [ref, schema]
   );
 }
