@@ -18,14 +18,14 @@ export function useFormValidator(
   schema: ObjectSchema
 ) {
   return useCallback(
-    async function handle(
-      options: ValidationOptions = {
-        applyErrors: true
-      }
-    ): Promise<ValidationResult> {
+    async function handle({
+      applyErrors = true
+    }: ValidationOptions): Promise<ValidationResult> {
       if (!ref.current) throw Error('null form reference');
 
       const data = ref.current.getData();
+
+      console.log({ applyErrors });
 
       try {
         await schema.validate(data, {
@@ -41,7 +41,7 @@ export function useFormValidator(
             validationErrors[error.path] = error.message;
           });
 
-          if (options.applyErrors) ref.current.setErrors(validationErrors);
+          if (applyErrors) ref.current.setErrors(validationErrors);
 
           return { success: false, errors: validationErrors };
         }
