@@ -9,9 +9,16 @@ interface ValidationResult {
   data?: object;
 }
 
+interface ValidationOptions {
+  applyErrors: boolean;
+}
+
 export function useFormValidator(
   ref: RefObject<FormHandles>,
-  schema: ObjectSchema
+  schema: ObjectSchema,
+  options: ValidationOptions = {
+    applyErrors: true
+  }
 ) {
   return useCallback(
     async function handle(): Promise<ValidationResult> {
@@ -33,7 +40,7 @@ export function useFormValidator(
             validationErrors[error.path] = error.message;
           });
 
-          ref.current.setErrors(validationErrors);
+          if (options.applyErrors) ref.current.setErrors(validationErrors);
 
           return { success: false, errors: validationErrors };
         }
