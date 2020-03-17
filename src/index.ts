@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useState } from 'react';
+import { RefObject, useCallback, useState, useMemo } from 'react';
 
 import { FormHandles as UnformHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -64,7 +64,7 @@ export function useFormHandlers(ref: RefObject<UnformHandles>) {
   const [schema, setSchema] = useState<Yup.ObjectSchema>(Yup.object());
   const handleValidate = useFormValidator(ref, schema);
 
-  return useCallback(() => {
+  return useMemo(() => {
     if (ref.current === null) {
       throw Error('null form reference');
     }
@@ -77,5 +77,5 @@ export function useFormHandlers(ref: RefObject<UnformHandles>) {
         return handleValidate(options);
       }
     };
-  }, [ref, handleValidate])();
+  }, [ref, handleValidate]);
 }
