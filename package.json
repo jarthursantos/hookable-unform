@@ -12,6 +12,12 @@
   "scripts": {
     "build": "tsc"
   },
+  "directories": {
+    "lib": "dist"
+  },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/react": "^16.9.23",
     "@types/yup": "^0.26.32",

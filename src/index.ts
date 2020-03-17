@@ -79,7 +79,7 @@ export function useFormHandlers(ref: RefObject<UnformHandles>) {
         return handleValidate(options);
       }
     });
-  }, [ref, handleValidate]);
+  }, [ref, schema, handleValidate]);
 
   return handlers;
 }
