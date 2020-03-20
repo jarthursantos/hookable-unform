@@ -1,7 +1,7 @@
-import { RefObject, useCallback, useState, useMemo, useEffect } from 'react';
+import { RefObject, useCallback } from "react";
 
-import { FormHandles as UnformHandles } from '@unform/core';
-import * as Yup from 'yup';
+import { FormHandles } from "@unform/core";
+import * as Yup from "yup";
 
 export interface ValidationResult {
   success: boolean;
@@ -14,7 +14,7 @@ export interface ValidationOptions {
 }
 
 export function useFormValidator(
-  ref: RefObject<UnformHandles>,
+  ref: RefObject<FormHandles>,
   schema: Yup.ObjectSchema
 ) {
   return useCallback(
@@ -23,7 +23,7 @@ export function useFormValidator(
         applyErrors: true
       }
     ): Promise<ValidationResult> {
-      if (!ref.current) throw Error('null form reference');
+      if (!ref.current) throw Error("null form reference");
 
       const data = ref.current.getData();
 
@@ -53,33 +53,6 @@ export function useFormValidator(
   );
 }
 
-export interface FormHandles extends UnformHandles {
-  validate(
-    schema: Yup.ObjectSchema,
-    options: ValidationOptions
-  ): Promise<ValidationResult>;
-}
-
-export function useFormHandlers(ref: RefObject<UnformHandles>) {
-  const [schema, setSchema] = useState<Yup.ObjectSchema>(Yup.object());
-  const handleValidate = useFormValidator(ref, schema);
-
-  const [handlers, setHandlers] = useState<FormHandles>();
-
-  useEffect(() => {
-    if (ref.current === null) {
-      throw Error('null form reference');
-    }
-
-    setHandlers({
-      ...ref.current,
-      validate: (objSchema: Yup.ObjectSchema, options: ValidationOptions) => {
-        setSchema(objSchema);
-
-        return handleValidate(options);
-      }
-    });
-  }, [ref, schema, handleValidate]);
-
-  return handlers;
+export function useFormHandlers(ref: RefObject<FormHandles>) {
+  return ref.current;
 }

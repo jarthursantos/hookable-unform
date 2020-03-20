@@ -84,3 +84,7 @@ const Form: React.FC = () => {
 
 export default Form;
 ```
+
+Options in returned function of hook
+
+- `applyErrors: boolean`: set if automatically apply founded errors, default is true
