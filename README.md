@@ -25,8 +25,7 @@ import { useFormValidator } from 'hookable-unform';
 
 import schema from './schema';
 
-const formRef = useRef<FormHandles>(null);
-const validateForm = useFormValidator(formRef, schema);
+const [formRef, validateForm] = useFormValidator(schema);
 
 const handleSubmit = useCallback(async () => {
   const validationResult = await validateForm();
@@ -62,8 +61,7 @@ const schema = Yup.object().shape({
 });
 
 const Form: React.FC = () => {
-  const formRef = useRef<FormHandles>(null);
-  const validateForm = useFormValidator(formRef, schema);
+  const [formRef, validateForm] = useFormValidator(schema);
 
   const handleSubmit = useCallback(async () => {
     const validationResult = await validateForm();

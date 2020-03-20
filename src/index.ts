@@ -1,4 +1,4 @@
-import { RefObject, useCallback } from "react";
+import { RefObject, useCallback, useRef } from "react";
 
 import { FormHandles } from "@unform/core";
 import * as Yup from "yup";
@@ -13,44 +13,46 @@ export interface ValidationOptions {
   applyErrors: boolean;
 }
 
-export function useFormValidator(
-  ref: RefObject<FormHandles>,
-  schema: Yup.ObjectSchema
-) {
-  return useCallback(
-    async function handle(
-      { applyErrors }: ValidationOptions = {
-        applyErrors: true
-      }
-    ): Promise<ValidationResult> {
-      if (!ref.current) throw Error("null form reference");
+export function useFormValidator(schema: Yup.ObjectSchema) {
+  const ref = useRef<FormHandles>(null);
 
-      const data = ref.current.getData();
+  return [
+    ref,
+    useCallback(
+      async function handle(
+        { applyErrors }: ValidationOptions = {
+          applyErrors: true
+        }
+      ): Promise<ValidationResult> {
+        if (!ref.current) throw Error("null form reference");
 
-      try {
-        await schema.validate(data, {
-          abortEarly: false
-        });
+        const data = ref.current.getData();
 
-        return { success: true, data };
-      } catch (err) {
-        const validationErrors: { [key: string]: string } = {};
-
-        if (err instanceof Yup.ValidationError) {
-          err.inner.forEach(error => {
-            validationErrors[error.path] = error.message;
+        try {
+          await schema.validate(data, {
+            abortEarly: false
           });
 
-          if (applyErrors) ref.current.setErrors(validationErrors);
+          return { success: true, data };
+        } catch (err) {
+          const validationErrors: { [key: string]: string } = {};
 
-          return { success: false, errors: validationErrors };
+          if (err instanceof Yup.ValidationError) {
+            err.inner.forEach(error => {
+              validationErrors[error.path] = error.message;
+            });
+
+            if (applyErrors) ref.current.setErrors(validationErrors);
+
+            return { success: false, errors: validationErrors };
+          }
+
+          throw err;
         }
-
-        throw err;
-      }
-    },
-    [ref, schema]
-  );
+      },
+      [ref, schema]
+    )
+  ];
 }
 
 export function useFormHandlers(ref: RefObject<FormHandles>) {
