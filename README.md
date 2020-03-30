@@ -2,30 +2,40 @@
 
 A set of React Hooks to use with [Unform](https://unform.dev/)
 
-### Getting Started
+## Getting Started
 
-```
-yarn add hookable-unform yup @unform/core
+- `yarn add hookable-unform yup @unform/core`
+  or
+- `npm i hookable-unform yup @unform/core`
 
-// or
-
-npm i hookable-unform yup @unform/core
-```
-
-- yup and @unform/core are required as peer dependencies
+  - `yup` and `@unform/core` are required as peer dependencies
 
 ## Hooks
 
-### useFormValidator
-
-Simple Example
+All hooks have two variations, the one that receives the form reference as a parameter and the one that returns a reference to be used later, this second one always suffixes the word `Ref`
 
 ```tsx
-import { useFormValidator } from 'hookable-unform';
+import { useRef } from 'react';
+import { useFormValidator, useFormValidatorRef } from 'hookable-unform';
 
-import schema from './schema';
+import schema from './schema'; // Yup Schema
 
-const [formRef, validateForm] = useFormValidator(schema);
+const formRef = useRef(null);
+
+const validateForm = useFormValidator(formRef, schema);
+const [formRef, validateForm] = useFormValidatorRef(schema);
+```
+
+### useFormValidator[Ref]
+
+useFormValidator execute validation on your form based in a Yup Schema.
+
+```tsx
+import { useFormValidatorRef } from 'hookable-unform';
+
+import schema from './schema'; // Yup Schema
+
+const [formRef, validateForm] = useFormValidatorRef(schema);
 
 const handleSubmit = useCallback(async () => {
   const validationResult = await validateForm();
@@ -42,47 +52,24 @@ const handleSubmit = useCallback(async () => {
 </Form>;
 ```
 
-Complete Example
-
-```tsx
-import React, { useRef, useCallback } from 'react';
-import { useFormValidator } from 'hookable-unform';
-import { FormHandles } from '@unform/core';
-import { Form as Unform } from '@unform/web';
-import * as Yup from 'yup';
-
-const schema = Yup.object().shape({
-  email: Yup.string()
-    .email()
-    .required(),
-  password: Yup.string()
-    .min(6)
-    .required()
-});
-
-const Form: React.FC = () => {
-  const [formRef, validateForm] = useFormValidator(schema);
-
-  const handleSubmit = useCallback(async () => {
-    const validationResult = await validateForm();
-
-    if (validationResult.success) {
-      console.log(validationResult.data);
-    } else {
-      console.log(validationResult.errors);
-    }
-  }, [validateForm]);
-
-  return (
-    <Form onSubmit={handleSubmit} ref={formRef}>
-      {/* inputs */}
-    </Form>
-  );
-};
-
-export default Form;
-```
-
 Options in returned function of hook
 
 - `applyErrors: boolean`: set if automatically apply founded errors, default is true
+
+### useFormHandlers[Ref]
+
+userFormHandlers execute the ref null verification, and you can call function without `Object is possibly 'null'`, exclude use of `?.` operator.
+
+```tsx
+import { useFormHandlersRef } from 'hookable-unform';
+
+const [formRef, { getData, setData, submitForm, ...rest }] = useFormHandlersRef();
+
+const handleSubmit = useCallback(async () => {
+  console.log(getData());
+}, [validateForm]);
+
+<Form onSubmit={handleSubmit} ref={formRef}>
+  {/* inputs */}
+</Form>;
+```
